@@ -4,14 +4,14 @@ type TDeveloper = {
   email: string;
 };
 
-type TDeveloperRequest = Omit<TDeveloper, "id">;
-
 type TDeveloperInfos = {
   id: number;
   developerSince: string;
   preferredOS: string;
   developerId: number;
 };
+
+type TDeveloperRequest = Omit<TDeveloper, "id">;
 
 type TDeveloperInfosRequest = Omit<TDeveloperInfos, "id">;
 

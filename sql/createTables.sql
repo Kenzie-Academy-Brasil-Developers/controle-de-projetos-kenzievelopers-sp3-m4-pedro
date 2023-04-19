@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS developers (
 "name" VARCHAR(50) NOT NULL,
 "email" VARCHAR(50) NOT NULL UNIQUE
 );
+
 CREATE TYPE "OS" AS ENUM ('Windows', 'Linux', 'MacOS');
 
 CREATE TABLE IF NOT EXISTS developer_infos (
@@ -10,7 +11,7 @@ CREATE TABLE IF NOT EXISTS developer_infos (
 "developerSince" DATE NOT NULL,
 "preferredOS" "OS" NOT NULL,
 "developerId" INTEGER UNIQUE NOT NULL,
-FOREIGN KEY ("developerId") REFERENCES developers("id")
+FOREIGN KEY ("developerId") REFERENCES developers("id") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS projects (
@@ -22,7 +23,7 @@ CREATE TABLE IF NOT EXISTS projects (
 "startDate" DATE NOT NULL,
 "endDate" DATE,
 "developerId" INTEGER,
-FOREIGN KEY ("developerId") REFERENCES developers("id")
+FOREIGN KEY ("developerId") REFERENCES developers("id") ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS technologies ( 
@@ -48,8 +49,8 @@ CREATE TABLE IF NOT EXISTS  projects_technologies (
 "addedIn" DATE NOT NULL,
 "technologyId" INTEGER NOT NULL,
 "projectId" INTEGER NOT NULL,
-FOREIGN KEY ("technologyId") REFERENCES technologies("id"),
-FOREIGN KEY ("projectId") REFERENCES projects("id")
+FOREIGN KEY ("technologyId") REFERENCES technologies("id") ON DELETE CASCADE,
+FOREIGN KEY ("projectId") REFERENCES projects("id") ON DELETE CASCADE
 );
 
 

@@ -1,13 +1,32 @@
 import express, { Application } from "express";
 import "dotenv/config";
-import { createDevelopers, deleteDevelopers, updateDevelopers } from "./logic";
+import {
+  createDeveloperInfo,
+  createDevelopers,
+  deleteDevelopers,
+  updateDevelopers,
+} from "./logics/developers";
+import { checkIfEmailAlreadyExists, ensureDeveloperExists } from "./middleware";
 
 const app: Application = express();
 app.use(express.json());
 
-app.post("/developers", createDevelopers);
-app.patch("/developers/:id", updateDevelopers);
-app.delete("/developers/:id", deleteDevelopers);
+app.post("/developers", createDevelopers, checkIfEmailAlreadyExists);
+app.post(
+  " /developers/:id/infos",
+  createDeveloperInfo,
+  checkIfEmailAlreadyExists
+);
+app.get("/developers/:id", ensureDeveloperExists);
+app.patch("/developers/:id", ensureDeveloperExists, updateDevelopers);
+app.delete("/developers/:id", ensureDeveloperExists, deleteDevelopers);
 app.post("/developers/:id/infos");
+
+app.post("/projects", createDevelopers);
+app.get("/projects/:id");
+app.patch("/projects/:id");
+app.delete("/projects/:id");
+app.post("/projects/:id/technologies");
+app.delete("/projects/:id/technologies/:name");
 
 export default app;

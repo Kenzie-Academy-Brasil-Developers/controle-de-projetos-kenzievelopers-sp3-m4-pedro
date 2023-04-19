@@ -1,9 +1,14 @@
 import { Request, Response } from "express";
 import format from "pg-format";
 import { json } from "stream/consumers";
-import { TDeveloper, TDeveloperInfos, TDeveloperRequest } from "./interface";
 import { QueryResult } from "pg";
-import { client } from "./database";
+import { client } from "../database";
+import {
+  TDeveloperRequest,
+  TDeveloper,
+  TDeveloperInfos,
+  TDeveloperInfosRequest,
+} from "../interfaces/developers.interfaces";
 
 const createDevelopers = async (
   req: Request,
@@ -22,6 +27,30 @@ const createDevelopers = async (
   );
 
   const queryResult: QueryResult<TDeveloper> = await client.query(queryString);
+
+  return res.status(201).json(queryResult.rows[0]);
+};
+
+const createDevelopersInfos = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const payload: TDeveloperInfosRequest = req.body;
+  payload.developerId = Number(req.params.id);
+
+  const queryString: string = format(
+    `
+    INSERT INTO developers (%I)
+    VALUES (%L)
+    RETURNING *;
+  `,
+    Object.keys(payload),
+    Object.values(payload)
+  );
+
+  const queryResult: QueryResult<TDeveloperInfos> = await client.query(
+    queryString
+  );
 
   return res.status(201).json(queryResult.rows[0]);
 };
@@ -58,7 +87,7 @@ const deleteDevelopers = async (
 
   const queryString: string = format(
     `
-    DELETE FROM movies
+    DELETE FROM developers
     WHERE id = %L
     `,
     id
@@ -94,4 +123,9 @@ const createDeveloperInfo = async (
   return res.status(201).json(queryResult.rows[0]);
 };
 
-export { createDevelopers, updateDevelopers, deleteDevelopers };
+export {
+  createDevelopers,
+  updateDevelopers,
+  deleteDevelopers,
+  createDeveloperInfo,
+};
