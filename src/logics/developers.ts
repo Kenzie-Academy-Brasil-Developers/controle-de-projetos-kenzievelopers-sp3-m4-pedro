@@ -65,7 +65,7 @@ const updateDevelopers = async (
   const queryString: string = format(
     `
     UPDATE developers
-    SET(%I) = ROW(%I)
+    SET(%I) = ROW(%L)
     WHERE id = %L
     RETURNING *;
     `,
@@ -87,9 +87,9 @@ const deleteDevelopers = async (
 
   const queryString: string = format(
     `
-    DELETE FROM developers
-    WHERE id = %L
-    `,
+  DELETE FROM developers
+  WHERE id = %L
+  `,
     id
   );
 
@@ -98,34 +98,9 @@ const deleteDevelopers = async (
   return res.status(204).send();
 };
 
-const createDeveloperInfo = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  const payload: TDeveloperRequest = req.body;
-  const id: number = Number(req.params.id);
-
-  const queryString: string = format(
-    `
-    INSERT INTO developer_infos (%I)
-    VALUES (%L)
-    RETURNING *;
-  `,
-    Object.keys(payload),
-    Object.values(payload),
-    id
-  );
-
-  const queryResult: QueryResult<TDeveloperInfos> = await client.query(
-    queryString
-  );
-
-  return res.status(201).json(queryResult.rows[0]);
-};
-
 export {
   createDevelopers,
   updateDevelopers,
   deleteDevelopers,
-  createDeveloperInfo,
+  createDevelopersInfos,
 };

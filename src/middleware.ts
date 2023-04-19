@@ -35,14 +35,14 @@ const checkIfEmailAlreadyExists = async (
   res: Response,
   next: NextFunction
 ): Promise<Response | void> => {
-  const { name } = req.body;
+  const { email } = req.body;
 
   const queryString: string = format(
     `
     SELECT * FROM developers
     WHERE email = %L
     `,
-    name
+    email
   );
 
   const queryResult: QueryResult<TDeveloper> = await client.query(queryString);

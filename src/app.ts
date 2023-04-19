@@ -1,8 +1,8 @@
 import express, { Application } from "express";
 import "dotenv/config";
 import {
-  createDeveloperInfo,
   createDevelopers,
+  createDevelopersInfos,
   deleteDevelopers,
   updateDevelopers,
 } from "./logics/developers";
@@ -11,14 +11,15 @@ import { checkIfEmailAlreadyExists, ensureDeveloperExists } from "./middleware";
 const app: Application = express();
 app.use(express.json());
 
-app.post("/developers", createDevelopers, checkIfEmailAlreadyExists);
-app.post(
-  " /developers/:id/infos",
-  createDeveloperInfo,
-  checkIfEmailAlreadyExists
-);
+app.post("/developers", checkIfEmailAlreadyExists, createDevelopers);
+app.post(" /developers/:id/infos", createDevelopersInfos);
 app.get("/developers/:id", ensureDeveloperExists);
-app.patch("/developers/:id", ensureDeveloperExists, updateDevelopers);
+app.patch(
+  "/developers/:id",
+  ensureDeveloperExists,
+  checkIfEmailAlreadyExists,
+  updateDevelopers
+);
 app.delete("/developers/:id", ensureDeveloperExists, deleteDevelopers);
 app.post("/developers/:id/infos");
 
