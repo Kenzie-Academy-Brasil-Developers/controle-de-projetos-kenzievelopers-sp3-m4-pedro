@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import format from "pg-format";
-import { json } from "stream/consumers";
 import { QueryResult } from "pg";
 import { client } from "../database";
 import {
@@ -31,28 +30,11 @@ const createDevelopers = async (
   return res.status(201).json(queryResult.rows[0]);
 };
 
-const createDevelopersInfos = async (
+const listAllDevelopers = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const payload: TDeveloperInfosRequest = req.body;
-  payload.developerId = Number(req.params.id);
-
-  const queryString: string = format(
-    `
-    INSERT INTO developers (%I)
-    VALUES (%L)
-    RETURNING *;
-  `,
-    Object.keys(payload),
-    Object.values(payload)
-  );
-
-  const queryResult: QueryResult<TDeveloperInfos> = await client.query(
-    queryString
-  );
-
-  return res.status(201).json(queryResult.rows[0]);
+  return res.status(200).json();
 };
 
 const updateDevelopers = async (
@@ -96,6 +78,30 @@ const deleteDevelopers = async (
   await client.query(queryString);
 
   return res.status(204).send();
+};
+
+const createDevelopersInfos = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const payload: TDeveloperInfosRequest = req.body;
+  payload.developerId = Number(req.params.id);
+
+  const queryString: string = format(
+    `
+    INSERT INTO developer_infos (%I)
+    VALUES (%L)
+    RETURNING *;
+  `,
+    Object.keys(payload),
+    Object.values(payload)
+  );
+
+  const queryResult: QueryResult<TDeveloperInfos> = await client.query(
+    queryString
+  );
+
+  return res.status(201).json(queryResult.rows[0]);
 };
 
 export {

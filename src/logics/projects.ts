@@ -25,4 +25,23 @@ const createProjects = async (
   return res.status(201).json(queryResult.rows[0]);
 };
 
-export { createProjects };
+const deleteProjects = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const id: number = Number(req.params.id);
+
+  const queryString: string = format(
+    `
+  DELETE FROM projects
+  WHERE id = %L
+  `,
+    id
+  );
+
+  await client.query(queryString);
+
+  return res.status(204).send();
+};
+
+export { createProjects, deleteProjects };

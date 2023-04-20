@@ -2,6 +2,7 @@ import app from "./app";
 import { startDatabase } from "./database";
 
 const appPort = Number(process.env.APP_PORT || 3000);
+console.log(appPort);
 
 const server = (port: number) =>
   app.listen(port, async () => {
