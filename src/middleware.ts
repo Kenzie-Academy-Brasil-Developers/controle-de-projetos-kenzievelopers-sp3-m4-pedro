@@ -25,7 +25,6 @@ const ensureDeveloperExists = async (
   );
 
   const queryResult: QueryResult<TDeveloper> = await client.query(queryString);
-
   if (queryResult.rowCount === 0) {
     return res.status(404).json({
       message: "Developer not found.",
@@ -87,8 +86,35 @@ const ensureProjectExists = async (
   return next();
 };
 
+const checkIfInfoAlreadyExists = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const developerId = Number(req.params.id);
+
+  const queryString: string = format(
+    `
+    SELECT * FROM developer_infos
+    WHERE "developerId" = %L
+    `,
+    developerId
+  );
+
+  const queryResult: QueryResult<TDeveloper> = await client.query(queryString);
+
+  if (queryResult.rowCount > 0) {
+    return res.status(409).json({
+      message: "Developer infos already exists.",
+    });
+  }
+
+  return next();
+};
+
 export {
   ensureDeveloperExists,
   checkIfEmailAlreadyExists,
   ensureProjectExists,
+  checkIfInfoAlreadyExists,
 };

@@ -30,11 +30,32 @@ const createDevelopers = async (
   return res.status(201).json(queryResult.rows[0]);
 };
 
-const listAllDevelopers = async (
+const listDeveloper = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  return res.status(200).json();
+  const id: number = Number(req.params.id);
+
+  const queryString: string = format(
+    `
+  SELECT 
+    dev."id" AS "developerId",
+    dev."name" AS "developerName",
+    dev."email" AS "developerEmail",
+    di."developerSince" AS "developerInfoDeveloperSince",
+    di."preferredOS" AS "developerInfoPreferredOS"
+  FROM
+    developers dev
+  LEFT JOIN
+    developer_infos di ON dev."id" = di."developerId"
+  WHERE 
+   dev."id" = %L; 
+  `,
+    id
+  );
+  const queryResult: QueryResult = await client.query(queryString);
+
+  return res.json(queryResult.rows[0]);
 };
 
 const updateDevelopers = async (
@@ -87,6 +108,15 @@ const createDevelopersInfos = async (
   const payload: TDeveloperInfosRequest = req.body;
   payload.developerId = Number(req.params.id);
 
+  const preferredOs: Array<string> = ["Windows", "Linux", "MacOS"];
+
+  if (!preferredOs.includes(payload.preferredOS)) {
+    return res.status(400).json({
+      message: "Invalid OS option.",
+      options: ["Windows", "Linux", "MacOS"],
+    });
+  }
+
   const queryString: string = format(
     `
     INSERT INTO developer_infos (%I)
@@ -109,4 +139,5 @@ export {
   updateDevelopers,
   deleteDevelopers,
   createDevelopersInfos,
+  listDeveloper,
 };

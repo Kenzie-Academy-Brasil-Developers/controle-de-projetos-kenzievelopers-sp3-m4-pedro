@@ -7,7 +7,7 @@ type TDeveloper = {
 type TDeveloperInfos = {
   id: number;
   developerSince: string;
-  preferredOS: string;
+  preferredOS: "Windows" | "Linux" | "MacOS";
   developerId: number;
 };
 

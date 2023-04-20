@@ -4,10 +4,12 @@ import {
   createDevelopers,
   createDevelopersInfos,
   deleteDevelopers,
+  listDeveloper,
   updateDevelopers,
 } from "./logics/developers";
 import {
   checkIfEmailAlreadyExists,
+  checkIfInfoAlreadyExists,
   ensureDeveloperExists,
   ensureProjectExists,
 } from "./middleware";
@@ -17,7 +19,7 @@ const app: Application = express();
 app.use(express.json());
 
 app.post("/developers", checkIfEmailAlreadyExists, createDevelopers);
-app.get("/developers/:id", ensureDeveloperExists);
+app.get("/developers/:id", ensureDeveloperExists, listDeveloper);
 app.patch(
   "/developers/:id",
   ensureDeveloperExists,
@@ -25,7 +27,12 @@ app.patch(
   updateDevelopers
 );
 app.delete("/developers/:id", ensureDeveloperExists, deleteDevelopers);
-app.post("/developers/:id/infos", createDevelopersInfos);
+app.post(
+  "/developers/:id/infos",
+  ensureDeveloperExists,
+  checkIfInfoAlreadyExists,
+  createDevelopersInfos
+);
 
 app.post("/projects", ensureDeveloperExists, createProjects);
 app.get("/projects/:id", ensureDeveloperExists);
