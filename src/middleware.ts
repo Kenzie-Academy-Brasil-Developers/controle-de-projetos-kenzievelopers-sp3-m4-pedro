@@ -112,6 +112,32 @@ const checkIfInfoAlreadyExists = async (
   return next();
 };
 
+const checkIfTechnologyAlreadyExists = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const developerId = Number(req.params.id);
+
+  const queryString: string = format(
+    `
+    SELECT * FROM developer_infos
+    WHERE "developerId" = %L
+    `,
+    developerId
+  );
+
+  const queryResult: QueryResult<TDeveloper> = await client.query(queryString);
+
+  if (queryResult.rowCount > 0) {
+    return res.status(409).json({
+      message: "This technology is already associated with the project",
+    });
+  }
+
+  return next();
+};
+
 export {
   ensureDeveloperExists,
   checkIfEmailAlreadyExists,

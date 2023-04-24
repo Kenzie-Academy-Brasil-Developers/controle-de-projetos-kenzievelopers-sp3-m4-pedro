@@ -13,7 +13,12 @@ import {
   ensureDeveloperExists,
   ensureProjectExists,
 } from "./middleware";
-import { createProjects, deleteProjects } from "./logics/projects";
+import {
+  createProjects,
+  createProjectsTechnologies,
+  deleteProjects,
+  updateProjects,
+} from "./logics/projects";
 
 const app: Application = express();
 app.use(express.json());
@@ -36,9 +41,9 @@ app.post(
 
 app.post("/projects", ensureDeveloperExists, createProjects);
 app.get("/projects/:id", ensureDeveloperExists);
-app.patch("/projects/:id", ensureDeveloperExists);
+app.patch("/projects/:id", ensureDeveloperExists, updateProjects);
 app.delete("/projects/:id", deleteProjects, ensureProjectExists);
-app.post("/projects/:id/technologies");
+app.post("/projects/:id/technologies", createProjectsTechnologies);
 app.delete("/projects/:id/technologies/:name", ensureDeveloperExists);
 
 export default app;

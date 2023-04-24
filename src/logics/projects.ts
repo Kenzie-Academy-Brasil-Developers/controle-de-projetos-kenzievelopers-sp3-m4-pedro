@@ -25,6 +25,51 @@ const createProjects = async (
   return res.status(201).json(queryResult.rows[0]);
 };
 
+const createProjectsTechnologies = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const payload: TProjectsRequest = req.body;
+
+  const queryString: string = format(
+    `
+    INSERT INTO projects (%I)
+    VALUES (%L)
+    RETURNING *;
+  `,
+    Object.keys(payload),
+    Object.values(payload)
+  );
+
+  const queryResult: QueryResult<TProjects> = await client.query(queryString);
+
+  return res.status(201).json(queryResult.rows[0]);
+};
+
+const updateProjects = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const payload: TProjectsRequest = req.body;
+  const developerId: number = Number(req.params.id);
+
+  const queryString: string = format(
+    `
+    UPDATE projects
+    SET(%I) = ROW(%L)
+    WHERE "developerId" = %L
+    RETURNING *;
+    `,
+    Object.keys(payload),
+    Object.values(payload),
+    developerId
+  );
+
+  const queryResult: QueryResult<TProjects> = await client.query(queryString);
+
+  return res.status(200).json(queryResult.rows[0]);
+};
+
 const deleteProjects = async (
   req: Request,
   res: Response
@@ -44,4 +89,9 @@ const deleteProjects = async (
   return res.status(204).send();
 };
 
-export { createProjects, deleteProjects };
+export {
+  createProjects,
+  createProjectsTechnologies,
+  deleteProjects,
+  updateProjects,
+};
